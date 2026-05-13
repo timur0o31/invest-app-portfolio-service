@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_infra-portfolio
+    environment:
+      POSTGRES_USER: portfolio-user
+      POSTGRES_PASSWORD: portfolio-password
+      POSTGRES_DB: portfolio-db
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - infra
+
+volumes:
+  postgres_data:
+
+networks:
+  infra:
+    driver: bridge
