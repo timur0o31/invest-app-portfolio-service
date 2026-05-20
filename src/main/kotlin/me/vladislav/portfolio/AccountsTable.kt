@@ -1,4 +1,4 @@
-package me.vladislav.data
+package me.vladislav.portfolio
 
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp

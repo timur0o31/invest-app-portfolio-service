@@ -1,4 +1,4 @@
-package me.vladislav.api
+package me.vladislav.portfolio
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -26,6 +26,12 @@ data class DepositResponse(
 )
 
 @Serializable
+data class ResetRequest(
+    @Contextual
+    val amount: BigDecimal? = null
+)
+
+@Serializable
 data class WithdrawRequest(
     @Contextual
     val amount: BigDecimal
@@ -40,18 +46,19 @@ data class WithdrawResponse(
 @Serializable
 data class PortfolioSummaryResponse(
     @Contextual
-    val balance: BigDecimal, // Свободные средства
+    val balance: BigDecimal,
     @Contextual
-    val portfolioValue: BigDecimal, // Текущая стоимость всех позиций
+    val portfolioValue: BigDecimal,
     @Contextual
-    val totalEquity: BigDecimal, // Полная стоимость аккаунта.
+    val totalEquity: BigDecimal,
     @Contextual
-    val totalPnl: BigDecimal, // Общая прибыль/убыток по всем позициям
+    val totalPnl: BigDecimal,
     val positions: List<PositionSummaryResponse>
 )
 
 @Serializable
 data class PositionSummaryResponse(
+    val instrumentId: Long,
     val ticker: String,
     val quantity: Int,
     @Contextual
@@ -59,7 +66,7 @@ data class PositionSummaryResponse(
     @Contextual
     val currentPrice: BigDecimal,
     @Contextual
-    val currentValue: BigDecimal, // Текущая стоимость позиции
+    val currentValue: BigDecimal,
     @Contextual
     val pnl: BigDecimal
 )
@@ -67,14 +74,9 @@ data class PositionSummaryResponse(
 @Serializable
 data class PositionResponse(
     val id: String,
-    val instrumentId: String,
+    val instrumentId: Long,
     val ticker: String,
     val quantity: Int,
     @Contextual
     val averageBuyPrice: BigDecimal
-)
-
-@Serializable
-data class ErrorResponse(
-    val message: String
 )

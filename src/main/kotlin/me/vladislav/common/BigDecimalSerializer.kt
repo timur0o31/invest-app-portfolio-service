@@ -1,4 +1,4 @@
-package me.vladislav.api
+package me.vladislav.common
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

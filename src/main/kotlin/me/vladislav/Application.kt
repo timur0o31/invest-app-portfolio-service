@@ -16,11 +16,28 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
-import me.vladislav.api.*
-import me.vladislav.data.AccountRepository
-import me.vladislav.data.DatabaseFactory
-import me.vladislav.domain.AccountService
+import me.vladislav.analytics.AnalyticsService
+import me.vladislav.analytics.analyticsRoutes
+import me.vladislav.common.AccountNotFoundException
+import me.vladislav.common.BigDecimalSerializer
+import me.vladislav.common.ErrorResponse
+import me.vladislav.common.ValidationException
+import me.vladislav.infrastructure.DatabaseFactory
+import me.vladislav.operations.OperationRepository
+import me.vladislav.operations.OperationService
+import me.vladislav.operations.operationRoutes
+import me.vladislav.orders.OrderRepository
+import me.vladislav.orders.TradingService
+import me.vladislav.orders.orderRoutes
+import me.vladislav.portfolio.AccountRepository
+import me.vladislav.portfolio.AccountService
+import me.vladislav.portfolio.PortfolioRepository
+import me.vladislav.portfolio.PortfolioService
+import me.vladislav.portfolio.accountRoutes
+import me.vladislav.portfolio.portfolioRoutes
+import me.vladislav.quotes.QuotesClient
 import org.slf4j.event.Level
+import java.time.Duration
 import javax.naming.AuthenticationException
 
 fun Application.module() {
@@ -96,11 +113,25 @@ fun Application.module() {
 
     DatabaseFactory.init(environment.config)
     val accountRepository = AccountRepository()
-    val accountService = AccountService(accountRepository)
+    val portfolioRepository = PortfolioRepository()
+    val orderRepository = OrderRepository()
+    val operationRepository = OperationRepository()
+    val quotesBaseUrl = config.propertyOrNull("quotes.baseUrl")?.getString() ?: "http://127.0.0.1:8082"
+    val quotesClient = QuotesClient(quotesBaseUrl, Duration.ofSeconds(3))
+
+    val accountService = AccountService(accountRepository, operationRepository, portfolioRepository)
+    val portfolioService = PortfolioService(accountRepository, portfolioRepository, quotesClient)
+    val tradingService = TradingService(accountRepository, portfolioRepository, orderRepository, operationRepository, quotesClient)
+    val operationService = OperationService(accountRepository, operationRepository)
+    val analyticsService = AnalyticsService(portfolioService)
 
     routing {
         get("/") { call.respondText("Portfolio service is running") }
         swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml")
         accountRoutes(accountService)
+        portfolioRoutes(portfolioService)
+        orderRoutes(tradingService)
+        operationRoutes(operationService)
+        analyticsRoutes(analyticsService)
     }
 }

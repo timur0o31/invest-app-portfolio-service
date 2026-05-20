@@ -1,4 +1,4 @@
-package me.vladislav.api
+package me.vladislav.common
 
 import java.util.UUID
 

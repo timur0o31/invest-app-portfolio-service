@@ -1,10 +1,10 @@
-package me.vladislav.domain
+package me.vladislav.portfolio
 
 import kotlinx.datetime.Instant
 import java.math.BigDecimal
-import java.util.*
+import java.util.UUID
 
-data class Account (
+data class Account(
     val id: UUID,
     val userId: UUID,
     val balance: BigDecimal,
@@ -13,10 +13,10 @@ data class Account (
     val updatedAt: Instant
 )
 
-data class Position (
+data class Position(
     val id: UUID,
     val accountId: UUID,
-    val instrumentId: UUID,
+    val instrumentId: Long,
     val ticker: String,
     val quantity: Int,
     val averageBuyPrice: BigDecimal,
