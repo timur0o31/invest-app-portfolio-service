@@ -1,6 +1,4 @@
-package me.vladislav.api
-
-import me.vladislav.domain.Account
+package me.vladislav.portfolio
 
 fun Account.toResponse() = AccountResponse(
     id = id.toString(),
@@ -15,4 +13,12 @@ fun Account.toDepositResponse() = DepositResponse(
 
 fun Account.toWithdrawResponse() = WithdrawResponse(
     balance = balance
+)
+
+fun Position.toResponse() = PositionResponse(
+    id = id.toString(),
+    instrumentId = instrumentId,
+    ticker = ticker,
+    quantity = quantity,
+    averageBuyPrice = averageBuyPrice
 )
